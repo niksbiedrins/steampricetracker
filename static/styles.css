@@ -1,0 +1,37 @@
+body {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+}
+
+input {
+    width: 300px;
+    height: 25px;
+    border: 2px solid #ccc;
+    border-radius: 2px;
+    outline: none;
+}
+
+input:focus{
+    border-color: #919191;
+    border-radius: 2px;
+    outline: none;
+}
+
+button {
+    height: 30px;
+    width: 50px;
+    border-radius: 5px;
+    color: white;
+    border: 2px solid #0c7bfa;
+    background-color: #4099ff;
+    outline: none;
+}
+
+button:hover {
+    background-color: #0c7bfa;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+}
