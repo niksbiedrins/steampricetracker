@@ -1,6 +1,5 @@
 import re
 from datetime import datetime
-from pymongo import MongoClient, errors
 import requests
 
 # steam app list requests
@@ -19,22 +18,23 @@ def get_gamename_from_appid(appid: str):
     return None
 
 # main functions
-def init_database(db_name: str, collection_name: str):
-    try:
-        client = MongoClient("mongodb://localhost:27017/")
-        mydb = client[db_name]
-        prices = mydb[collection_name]
-
-        return mydb, prices
-    except errors.ServerSelectionTimeoutError as e:
-        print(f"Could not connect to MongoDB: {e}")
-        return None, None
-
 def get_appid(game_name: str) -> str:
     for app in app_list_json["applist"]["apps"]:
         if format_game_name(app["name"]) == format_game_name(game_name):
             return app["appid"]
     return None
+
+def get_icon_link(appid: str, country_code: str) -> str:
+    try:
+        app_data = requests.get(f"https://store.steampowered.com/api/appdetails?appids={appid}&cc={country_code}", timeout=10)
+        app_data.raise_for_status()
+        app_data_json = app_data.json()
+
+        icon_link_string = app_data_json[str(appid)]["data"]["capsule_image"]
+
+        return icon_link_string
+    except:
+        print("Error fetching game icon.")
 
 def get_price(appid, country_code: str)  -> float:
     try:
@@ -55,31 +55,3 @@ def get_price(appid, country_code: str)  -> float:
         print("Pirce data not found in response.")
     except ValueError:
         print("Price format error.")
-
-def save_price(gamename: str, appid: str, price: float, prices_collection) -> str:
-    if prices_collection is None:
-        print("Cannot save price. No database connection!")
-        return "no_connection"
-
-    date = datetime.now().strftime("%d/%m/%y")
-    time = datetime.now().strftime("%H:%M")
-
-    existing = prices_collection.find_one({"appid": appid})
-    if existing:
-        print(f"{gamename} {appid} already exists in the database!")
-        return "already_exists"
-
-    try:
-        prices_collection.insert_one({
-            "gamename": get_gamename_from_appid(appid),
-            "date": date,
-            "time":  time,
-            "appid": appid,
-            "price": price,
-        })
-        print(f"Successfully stored {gamename} {appid} in the database!")
-        return "success"
-    except errors.PyMongoError as e:
-        print(f"MongoDB error: {e}")
-        return "error"
-

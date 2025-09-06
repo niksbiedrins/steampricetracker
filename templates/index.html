@@ -14,9 +14,14 @@
 
     <h1> Track History</h1>
     <div class="tracked_games">
-        {% for game in tracked_games %}
-            <div class="game">
-                <strong>{{ game.gamename }}</strong> - £{{ game.price }}
+        {% for game in games %}
+            <div class="game_card">
+                <img src="{{game.gameicon}}" class="game_icon" alt="{{game.gamename}} icon">
+                <div class="game_info">
+                    <strong>{{ game.gamename }}</strong><br>
+                    £{{ game.price }}<br>
+                    <a href="https://store.steampowered.com/app/{{ game.appid }}" target="_blank">View on Steam</a>
+                </div>
             </div>
         {% endfor %}
     </div>

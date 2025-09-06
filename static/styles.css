@@ -1,7 +1,10 @@
 body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     margin: auto;
     width: 50%;
-    text-align: center;
 }
 
 input {
@@ -34,4 +37,28 @@ button:hover {
 
 h1 {
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.tracked_games {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;  
+    width: 100%;
+}
+
+.game_card {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border: 2px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    width: auto;     
+    max-width: 90%;      
+    gap: 10px;           
+}
+
+img {
+    border-radius: 5px;
 }
