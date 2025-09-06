@@ -1,4 +1,6 @@
 import re
+from datetime import datetime
+from pymongo import MongoClient, errors
 import requests
 
 # steam app list requests
@@ -10,7 +12,19 @@ app_list_json = app_list.json()
 def format_game_name(game_name: str) -> str:
     return re.sub(r"[^a-zA-Z0-9\s]", "", game_name).lower().strip()
 
+def get_gamename_from_appid(appid: str):
+    for app in app_list_json["applist"]["apps"]:
+        if app["appid"] == appid:
+            return app["name"]
+
 # main functions
+def init_database(db_name: str, collection_name: str):
+    client = MongoClient("mongodb://localhost:27017/")
+    mydb = client[db_name]
+    prices = mydb[collection_name]
+
+    return mydb, prices
+
 def get_gamename() -> str:
     return str(input("Enter the game name you want to track: "))
 
@@ -28,9 +42,26 @@ def get_price(appid, country_code: str)  -> float:
 
     return price_float
 
+def save_price(gamename: str, appid: str, price: float, prices_collection):
+    date = datetime.now().strftime("%d/%m/%y")
+    time = datetime.now().strftime("%H:%M")
+
+    try:
+        prices_collection.insert_one({
+            "gamename": get_gamename_from_appid(appid),
+            "date": date,
+            "time":  time,
+            "appid": appid,
+            "price": price,
+        })
+        print(f"Successfully stored {gamename} {appid} in the database!")
+    except errors.DuplicateKeyError:
+        print(f"{gamename} {appid} already exists in the database!")
+
 # main code
+mydb, prices_collection = init_database("pricehistory", "prices")
 gamename = get_gamename()
 appid = get_appid(gamename)
 price = get_price(appid, "UK")
 
-print(price)
+save_price(gamename, appid, price, prices_collection)
