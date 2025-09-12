@@ -15,15 +15,23 @@
     <h1> Track History</h1>
     <div class="tracked_games">
         {% for game in games %}
-            <div class="game_card">
+            <div class="game_card" data-appid="{{ game.appid }}">
                 <img src="{{game.gameicon}}" class="game_icon" alt="{{game.gamename}} icon">
                 <div class="game_info">
                     <strong>{{ game.gamename }}</strong><br>
                     £{{ game.price }}<br>
-                    <a href="https://store.steampowered.com/app/{{ game.appid }}" target="_blank">View on Steam</a>
+                    <a href="https://store.steampowered.com/app/{{ game.appid }}" target="_blank">View on Steam</a><br>
+                    <button class="delete">Untrack</button>
                 </div>
             </div>
         {% endfor %}
     </div>
+
+    <a href="{{ url_for('settings') }}">
+        <img src="{{ url_for('static', filename='assets/gear.png') }}" class="gear_icon">
+    </a>
+
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
+
 </html>
